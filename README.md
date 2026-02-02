@@ -1,113 +1,141 @@
 # 🏢 TechNova Partners - Analyse des causes d'attrition
 
-Projet HR Analytics pour identifier les causes racines de démission au sein de l'ESN TechNova Partners.
+Projet HR Analytics pour identifier les facteurs de démission au sein de l'ESN TechNova Partners et construire un modèle prédictif.
 
-## 📋 Contexte
+## 📋 Contexte métier
 
-TechNova Partners fait face à un turnover élevé. Ce projet vise à :
-- Analyser les données RH pour identifier les différences entre employés partis et restés
-- Construire un modèle de classification pour prédire les démissions
-- Extraire les causes potentielles via l'interprétation du modèle (SHAP)
+TechNova Partners, une ESN de 1470 employés, fait face à un **turnover de 16%**. Ce projet vise à :
 
-## 📁 Structure du projet
+1. **Analyser** les données RH pour identifier les différences entre employés partis et restés
+2. **Prédire** les démissions avec un modèle de classification (LightGBM)
+3. **Interpréter** les causes via SHAP (feature importance globale et locale)
 
-```
-Projet 4/
-├── pyproject.toml              # Configuration projet et dépendances
-├── uv.lock                     # Verrouillage des versions
-├── README.md                   # Ce fichier
-├── generate_reports.py         # Script de génération des rapports
-├── main.py                     # Point d'entrée principal
-├── 01_exploration_donnees.ipynb # Notebook d'exploration des données
-├── data/                       # Dossier des données sources
-│   ├── extrait_sirh.csv        # Données SIRH (sociodémo, salaire, poste...)
-│   ├── extrait_eval.csv        # Données évaluations de performance
-│   └── extrait_sondage.csv     # Données sondage + variable cible
-├── reports/                    # Rapports générés (auto-créé)
-└── .venv/                      # Environnement virtuel (auto-créé)
-```
+## 🎯 Résultats obtenus
 
-## 🚀 Installation et lancement
+| Métrique | Valeur |
+|----------|--------|
+| **Recall** | 59.6% (détecte 60% des départs) |
+| **Precision** | 36.8% |
+| **F1-Score** | 45.5% |
+| **ROC-AUC** | 80.0% |
+
+**Top 3 facteurs de départ identifiés :**
+1. 🕐 Heures supplémentaires excessives
+2. 💰 Salaire bas
+3. 😞 Faible satisfaction globale
+
+---
+
+## 🚀 Installation
 
 ### Prérequis
 - Python >= 3.10
-- [uv](https://docs.astral.sh/uv/) (gestionnaire de packages)
+- [uv](https://docs.astral.sh/uv/) (gestionnaire de packages recommandé)
 
-### Installation
-
-**1. Installer uv** (si non installé)
+### Option 1 : Avec uv (recommandé)
 
 ```bash
+# Installer uv si nécessaire
 curl -LsSf https://astral.sh/uv/install.sh | sh
-```
 
-**2. Cloner le projet**
-
-```bash
+# Cloner le projet
 git clone <url-du-repo>
 cd "Projet 4"
-```
 
-**3. Installer les dépendances**
-
-```bash
+# Installer les dépendances (crée automatiquement le .venv)
 uv sync
 ```
 
-Cette commande va :
-- Créer automatiquement l'environnement virtuel `.venv/`
-- Installer toutes les dépendances depuis `pyproject.toml` et `uv.lock`
+### Option 2 : Avec pip (alternative)
 
-**4. Activer l'environnement**
+```bash
+# Cloner le projet
+git clone <url-du-repo>
+cd "Projet 4"
+
+# Créer l'environnement virtuel
+python -m venv .venv
+source .venv/bin/activate  # Linux/Mac
+# .venv\Scripts\activate   # Windows
+
+# Installer les dépendances
+pip install -e .
+```
+
+---
+
+## 💻 Lancer le projet
+
+### VS Code (recommandé)
+
+1. Ouvrir le dossier dans VS Code
+2. Ouvrir `technova_partners.ipynb`
+3. Sélectionner le kernel Python `.venv`
+4. Exécuter toutes les cellules
+
+### JupyterLab
 
 ```bash
 source .venv/bin/activate
+jupyter lab
+# Ouvrir technova_partners.ipynb
 ```
 
-## 💻 Lancer Jupyter
+---
 
-**Option A - JupyterLab (recommandé) :**
-```bash
-uv run jupyter lab
+## 📂 Structure du projet
+
+```
+Projet 4/
+├── technova_partners.ipynb   # 📓 Notebook principal (analyse complète)
+├── pyproject.toml            # 📦 Dépendances du projet
+├── README.md                 # 📖 Ce fichier
+├── data/
+│   ├── extrait_sirh.csv      # Données RH (âge, salaire, ancienneté)
+│   ├── extrait_eval.csv      # Évaluations (satisfaction, heures sup)
+│   └── extrait_sondage.csv   # Sondage + variable cible
+└── .venv/                    # Environnement virtuel (non versionné)
 ```
 
-**Option B - Jupyter Notebook classique :**
-```bash
-uv run jupyter notebook
-```
+## 📊 Données sources
 
-**Option C - VS Code :**
-Ouvrir le fichier `.ipynb` directement dans VS Code et sélectionner le kernel `.venv`
+| Fichier | Description | Observations |
+|---------|-------------|--------------|
+| `extrait_sirh.csv` | Infos employé (âge, salaire, poste) | 1470 lignes |
+| `extrait_eval.csv` | Évaluations et heures supplémentaires | 1470 lignes |
+| `extrait_sondage.csv` | Satisfaction + **`a_quitte_l_entreprise`** | 1470 lignes |
 
 ## 📦 Dépendances principales
 
 | Package | Usage |
 |---------|-------|
-| pandas, numpy | Manipulation des données |
-| matplotlib, seaborn, plotly | Visualisation |
-| scikit-learn, xgboost, lightgbm | Machine Learning |
-| shap | Interprétation du modèle |
-| ydata-profiling | Profiling automatique des données |
+| `pandas`, `numpy` | Manipulation des données |
+| `matplotlib`, `seaborn` | Visualisation |
+| `scikit-learn` | Preprocessing, métriques, GridSearchCV |
+| `lightgbm` | Modèle final (Gradient Boosting) |
+| `imbalanced-learn` | Gestion du déséquilibre (SMOTE, undersampling) |
+| `shap` | Interprétation du modèle |
 
-## 📊 Données sources
+---
 
-| Fichier | Description | Clé potentielle |
-|---------|-------------|-----------------|
-| `data/extrait_sirh.csv` | Infos employé (âge, salaire, poste, ancienneté) | `id_employee` |
-| `data/extrait_eval.csv` | Évaluations (satisfaction, notes, heures sup) | `eval_number` |
-| `data/extrait_sondage.csv` | Sondage + **variable cible** `a_quitte_l_entreprise` | `code_sondage` |
+## 📓 Contenu du notebook
 
-## 🔧 Workflow recommandé
+Le notebook `technova_partners.ipynb` contient **5 parties** :
 
-1. **Installer** : `uv sync`
-2. **Activer** : `source .venv/bin/activate`
-3. **Explorer** : `python generate_reports.py` puis ouvrir les rapports HTML
-4. **Analyser** : Ouvrir `01_exploration_donnees.ipynb` dans Jupyter Lab ou VS Code
-5. **Modéliser** : Créer les notebooks de modélisation
+| Partie | Contenu |
+|--------|---------|
+| **1. EDA** | Chargement, nettoyage, analyse univariée/bivariée |
+| **2. Feature Engineering** | Création de variables, encoding, fusion |
+| **3. Modélisation Baseline** | Dummy, Logistic Regression, Random Forest |
+| **4. Gestion Déséquilibre** | class_weight, SMOTE, undersampling, calibration |
+| **5. Fine-tuning & SHAP** | GridSearchCV, LightGBM, interprétation SHAP |
+
+---
 
 ## 👤 Auteur
 
-Clément - Consultant Data Scientist
+**Clément** - Data Scientist
 
 ---
-*Projet réalisé dans le cadre de la formation OpenClassrooms*
+
+*Projet 4 - Formation Data Scientist OpenClassrooms*

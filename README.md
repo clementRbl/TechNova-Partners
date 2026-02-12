@@ -19,9 +19,9 @@ TechNova Partners, une ESN de 1470 employés, fait face à un **turnover de 16%*
 | **F1-Score** | 45.5% |
 | **ROC-AUC** | 80.0% |
 
-**Top 3 facteurs de départ identifiés :**
+**Top 3 facteurs de départ identifiés (SHAP) :**
 1. 🕐 Heures supplémentaires excessives
-2. 💰 Salaire bas
+2. 📉 Faible participation au PEE (Plan Épargne Entreprise)
 3. 😞 Faible satisfaction globale
 
 ---
